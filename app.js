@@ -10,7 +10,6 @@ const auth = require('./middlewares/auth');
 const { validationCreateUser, validationLogin } = require('./middlewares/validations');
 const { createUser, login } = require('./controllers/users');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-const NotFound = require('./errors/NotFound');
 
 const { PORT = 3000, DATABASE = 'mongodb://localhost:27017/bitfilmsdb' } = process.env;
 
@@ -40,10 +39,6 @@ app.post('/signin', validationLogin, login);
 
 app.use('/users', auth, userRoutes);
 app.use('/movies', auth, movieRoutes);
-
-app.use((req, res, next) => {
-  next(new NotFound('Непредвиденная ошибка'));
-});
 
 app.use(errorLogger);
 

@@ -4,12 +4,9 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const { errors } = require('celebrate');
-const userRoutes = require('./routes/users');
-const movieRoutes = require('./routes/movies');
-const auth = require('./middlewares/auth');
-const { validationCreateUser, validationLogin } = require('./middlewares/validations');
-const { createUser, login } = require('./controllers/users');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const handleError = require('./middlewares/handleError');
+const router = require('./routes');
 
 const { PORT = 3000, DATABASE = 'mongodb://localhost:27017/bitfilmsdb' } = process.env;
 
@@ -33,15 +30,12 @@ mongoose.connect(DATABASE);
 
 app.use(requestLogger);
 
-app.post('/signup', validationCreateUser, createUser);
-
-app.post('/signin', validationLogin, login);
-
-app.use('/users', auth, userRoutes);
-app.use('/movies', auth, movieRoutes);
+app.use('/', router);
 
 app.use(errorLogger);
 
 app.use(errors());
+
+app.use(handleError);
 
 app.listen(PORT);

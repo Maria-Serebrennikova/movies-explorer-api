@@ -1,13 +1,5 @@
 const { celebrate, Joi } = require('celebrate');
-const isUrl = require('validator/lib/isURL');
-
-const validationUrl = (url) => {
-  const validate = isUrl(url);
-  if (validate) {
-    return url;
-  }
-  throw new Error('Некорректный адрес URL');
-};
+const { regular } = require('../utils/regular');
 
 module.exports.validationCreateMovie = celebrate({
   body: Joi.object().keys({
@@ -16,12 +8,12 @@ module.exports.validationCreateMovie = celebrate({
     duration: Joi.number().required(),
     year: Joi.string().required(),
     description: Joi.string().required(),
-    image: Joi.string().required().custom(validationUrl),
-    trailerLink: Joi.string().required().custom(validationUrl),
+    image: Joi.string().pattern(regular).required(),
+    trailerLink: Joi.string().pattern(regular).required(),
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),
     movieId: Joi.number().required(),
-    thumbnail: Joi.string().required().custom(validationUrl),
+    thumbnail: Joi.string().pattern(regular).required(),
   }),
 });
 
@@ -33,7 +25,7 @@ module.exports.validationDeleteMovie = celebrate({
 
 module.exports.validationUpdateUser = celebrate({
   body: Joi.object().keys({
-    email: Joi.string().required().custom(validationUrl),
+    email: Joi.string().required().pattern(regular),
     name: Joi.string().min(2).max(30).required(),
   }),
 });

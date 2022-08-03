@@ -5,7 +5,7 @@ const NotFound = require('../errors/NotFound');
 
 module.exports.getMovies = (req, res, next) => {
   Movie.find({ owner: req.user._id })
-    .then((movies) => res.status(200).send(movies))
+    .then((movies) => res.send(movies))
     .catch((next));
 };
 
@@ -17,9 +17,9 @@ module.exports.createMovie = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequest('Введенные данные некорректны'));
-      } else {
-        next(err);
+        return;
       }
+      next(err);
     });
 };
 
@@ -30,10 +30,10 @@ module.exports.deleteMovie = (req, res, next) => {
         throw new NotFound('Фильм не найден');
       }
       if (movie.owner.toString() !== req.user._id) {
-        throw new Forbidden('Недостаточно прав для удаления карточки');
+        throw new Forbidden('Недостаточно прав для удаления фильма');
       }
       Movie.findByIdAndRemove(req.params.movieId)
-        .then(() => res.status(200).send(movie))
+        .then(() => res.send(movie))
         .catch(next);
     })
     .catch(next);

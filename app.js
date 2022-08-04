@@ -4,11 +4,12 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const { errors } = require('celebrate');
+const helmet = require('helmet');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const handleError = require('./middlewares/handleError');
 const router = require('./routes');
 
-const { PORT = 3000, DATABASE = 'mongodb://localhost:27017/bitfilmsdb' } = process.env;
+const { PORT = 3000, DATABASE = 'mongodb://localhost:27017/moviesdb' } = process.env;
 
 const app = express();
 
@@ -29,6 +30,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 mongoose.connect(DATABASE);
 
 app.use(requestLogger);
+
+app.use(helmet());
 
 app.use('/', router);
 

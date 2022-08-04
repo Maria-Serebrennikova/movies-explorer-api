@@ -37,6 +37,10 @@ module.exports.updateUser = (req, res, next) => {
         next(new BadRequest('Введенные данные некорректны.'));
         return;
       }
+      if (err.code === 11000) {
+        next(new Conflict('Пользователь с указанным email уже существует. Попробуйте еще.'));
+        return;
+      }
       next(err);
     });
 };
